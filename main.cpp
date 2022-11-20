@@ -11,6 +11,11 @@ int car0x=350, car1x=25, car2x=250, trainx =300, planex=70;
 int speed = 10;
 bool move_now = false, rain = false;
 
+float moon_or_sun_x1,moon_or_sun_y1,moon_or_sun_x2,moon_or_sun_y2;
+float circle_angle;
+double radius = 20;
+bool isAfternoon = false, isNight = false;
+
 float randomColor = 1 + (rand() % 9);
 
 void display_trees();
@@ -47,11 +52,29 @@ void start_moving(int value)
     }
 }
 
+void makeAfternoon(int value){
+    glutPostRedisplay();
+    glutTimerFunc(1000/60, makeAfternoon,0);
+
+    if(moon_or_sun_y1 < 280 && moon_or_sun_y1 > 159){
+        moon_or_sun_y1 -= 0.47;
+    }
+
+}
+void makeNight(int value){
+    glutPostRedisplay();
+    glutTimerFunc(1000/60, makeNight,0);
+
+    if(moon_or_sun_y1 < 270 && moon_or_sun_y1 > 140){
+        moon_or_sun_y1 += 0.45;
+    }
+}
+
 void start_raining(int value)
 {
     glutPostRedisplay();
     //rain start
-    glColor4f(1.0f, 1.0f, 1.0f, 0.0f);//white
+    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);//white
     glBegin(GL_LINES);
     for(int i = 0; i<1000; i=i+2){
         float randNum1 = rand()%(500 - (0) + 1) + (0);
@@ -73,39 +96,54 @@ void display(void)
     glClearColor ( 0.0,0.0,0.0, 0.0);
     glPushMatrix();
 
-
-    //sky and apartment part start
-
-    //sky and apartment part start
-    if(day_mood<3){
-        glColor3f(0.0f, 0.5f, 1.0f); //baby blur color
-    }else{
-        glColor3f(0.0f, 0.0f, 0.0f);//Black
-    }
-    glBegin(GL_POLYGON); //daclare sky and apartment area
-    glVertex3f(0.0f,   160.0f, 0.0f);
-    glVertex3f(500.0f, 160.0f, 0.0f);
-    glVertex3f(500.0f, 300.0f, 0.0f);
-    glVertex3f(0.0f,   300.0f, 0.0f);
-    glEnd();
+        //sky and apartment part start
+        if(day_mood == 1){
+            glColor3f(0.0f, 0.8f, 0.8f); //day
+        }else if(day_mood == 2){
+            glColor3f(0.0f, 0.8f, 0.9f); //afternoon
+        } else {
+            glColor3f(0.0f, 0.0f, 0.0f);//night
+        }
+        glBegin(GL_POLYGON); //daclare sky and apartment area
+        glVertex3f(0.0f,   160.0f, 0.0f); // left-bottom
+        if(day_mood == 1){
+            glColor3f(0.0f, 0.8f, 0.8f); //day
+        }else if(day_mood == 2){
+            glColor3f(0.8f, 0.8f, 0.0f); //afternoon
+        } else {
+            glColor3f(0.0f, 0.0f, 0.1f);//night
+        }
+        glVertex3f(500.0f, 160.0f, 0.0f); //right bottom
+        if(day_mood == 1){
+            glColor3f(0.0f, 0.0f, 1.0f); //day
+        }else if(day_mood == 2){
+            glColor3f(0.4f, 0.2f, 0.2f); //afternoon
+        } else {
+            glColor3f(0.0f, 0.0f, 0.3f);//night
+        }
+        glVertex3f(500.0f, 300.0f, 0.0f); //right top
+        if(day_mood == 1){
+            glColor3f(0.0f, 0.0f, 1.0f); //day
+        }else if(day_mood == 2){
+            glColor3f(0.0f, 0.0f, 1.0f); //afternoon
+        } else {
+            glColor3f(0.2f, 0.2f, 0.2f);//night
+        }
+        glVertex3f(0.0f,   300.0f, 0.0f); // left top
+        glEnd();
+        //sky and apartment part ends
 
         //moon or sun part start
-        float moon_or_sun_x1,moon_or_sun_y1,moon_or_sun_x2,moon_or_sun_y2;
-        float circle_angle;
-        double radius = 20;
-
-        if(day_mood == 1 || day_mood == 2){
+        if(day_mood == 1){
             moon_or_sun_x1 = 470,moon_or_sun_y1=275;
-        } else {
-            moon_or_sun_x1 = 55,moon_or_sun_y1=270;
         }
 
         if(day_mood ==1){
-            glColor4f(1.0f, 1.0f, 0.0f, 0.0f); //yellow color
+            glColor4f(1.0f, 0.8f, 0.0f, 1.0f); //yellow color
         }else if (day_mood == 2){
-            glColor4f(1.0f, 0.5f, 0.0f, 0.0f); //orange color
+            glColor4f(1.0f, 0.5f, 0.0f, 1.0f); //orange color
         }else{
-            glColor4f(1.0f, 1.0f, 1.0f, 0.0f); //white
+            glColor4f(1.0f, 1.0f, 1.0f, 1.0f); //white
         }
 
         glBegin(GL_TRIANGLE_FAN);
@@ -124,9 +162,9 @@ void display(void)
 
         /*plane part starts*/
         if(day_mood<3){
-            glColor4f(1.0f, 1.0f, 1.0f, 0.0f);//white body
+            glColor4f(1.0f, 1.0f, 1.0f, 1.0f);//white body
         }else{
-            glColor3f(0.5f, 0.5f, 0.5f);//Violet body
+            glColor4f(0.5f, 0.5f, 0.5f, 1.0f);//Violet body
         }
 
         glBegin(GL_POLYGON);
@@ -137,9 +175,9 @@ void display(void)
         glVertex3f(planex+88.0f,   268.0f, 0.0f);
         glEnd();
         if(day_mood ==1|| day_mood==2){
-            glColor4f(1.0f, 1.0f, 0.0f, 0.0f);//yellow headlight
+            glColor4f(1.0f, 1.0f, 0.0f, 1.0f);//yellow headlight
         } else {
-            glColor4f(1.0f, 0.0f, 0.0f, 0.0f);//red
+            glColor4f(1.0f, 0.0f, 0.0f, 1.0f);//red
         }
         glBegin(GL_POLYGON);
         glVertex3f(planex+3.0f,   268.0f, 0.0f);
@@ -157,7 +195,7 @@ void display(void)
         if(day_mood ==1|| day_mood==2){
             glColor3f(0.0f, 0.0f, 1.0f);//Blue
         } else {
-            glColor4f(1.0f, 1.0f, 0.0f, 0.0f);//yellow headlight
+            glColor4f(1.0f, 1.0f, 0.0f, 1.0f);//yellow headlight
         }
         glBegin(GL_POLYGON);
         glVertex3f(planex+98.0f,   262.0f, 0.0f);
@@ -174,7 +212,11 @@ void display(void)
 
     /*green horizon on the back starts*/
 
-    glColor3f(0.1f, 0.7f, 0.3f);//Green
+    if(day_mood == 3){
+        glColor3f(0.0f, 0.3f, 0.1f);//darkModeColor
+    } else {
+        glColor3f(0.1f, 0.6f, 0.1f);//Green
+    }
     glBegin(GL_POLYGON);
     glVertex3f(0.0f,   131.0f, 0.0f);
     glVertex3f(500.0f, 131.0f, 0.0f);
@@ -184,7 +226,11 @@ void display(void)
     /*green horizon on the back ends*/
 
     /*rail line starts*/
-    glColor3f(0.1f, 0.7f, 0.3f);//Green
+    if(day_mood == 3){
+        glColor3f(0.0f, 0.3f, 0.1f);//darkModeColor
+    } else {
+        glColor3f(0.1f, 0.6f, 0.1f);//Green
+    }
     glBegin(GL_POLYGON);
     glVertex3f(0.0f,   140.0f, 0.0f);
     glVertex3f(500.0f, 140.0f, 0.0f);
@@ -202,18 +248,28 @@ void display(void)
             glVertex3f(0.0f, 140.0f, 0.0f);
             glEnd();
 
-            glColor4f(0.1f, 0.2f, 0.1f, 0.6f);//body
+            glColor3f(0.1f, 0.1f, 0.1f);//body1
             glBegin(GL_POLYGON);
             glVertex3f(trainx,   140.0f, 0.0f);
             glVertex3f(trainx+25.0f, 140.0f, 0.0f);
             glVertex3f(trainx+25.0f, 155.0f, 0.0f);
             glVertex3f(trainx, 155.0f, 0.0f);
+            glEnd();
 
-            glColor4f(0.4f, 0.1f, 0.1f, 0.0f); //frontPart
+            glColor3f(0.4f, 0.0f, 0.0f); //engine
+            glBegin(GL_POLYGON);
             glVertex3f(trainx+25.0f, 140.0f, 0.0f);
             glVertex3f(trainx+38.0f, 140.0f, 0.0f);
             glVertex3f(trainx+38.0f, 150.0f, 0.0f);
             glVertex3f(trainx+25.0f, 150.0f, 0.0f);
+            glEnd();
+
+            glColor3f(1.0f, 1.0f, 1.0f); //headlight
+            glBegin(GL_POLYGON);
+            glVertex3f(trainx+38.0f, 145.0f, 0.0f);
+            glVertex3f(trainx+41.0f, 145.0f, 0.0f);
+            glVertex3f(trainx+41.0f, 149.0f, 0.0f);
+            glVertex3f(trainx+38.0f, 149.0f, 0.0f);
             glEnd();
     /*train part ends*/
 
@@ -221,7 +277,11 @@ void display(void)
     /*park part start*/
 
     //show the ground in the park
-    glColor4f(0.7f, 0.5f, 0.2f, 1.0f);//orange/brown
+    if(day_mood == 3){
+        glColor4f(0.5f, 0.3f, 0.1f, 1.0f);//orange/brown
+    } else {
+        glColor4f(0.7f, 0.5f, 0.2f, 1.0f);//orange/brown
+    }
     glBegin(GL_POLYGON);
     glVertex3f(0.0f,   71.0f, 0.0f);
     glVertex3f(500.0f, 71.0f, 0.0f);
@@ -250,7 +310,7 @@ void display(void)
     //road top border part start
     for(int i = 0; i<10; i++){
         if(i%2 == 0){
-            glColor4f(1.0f, 1.0f, 1.0f, 0.0f); //white color
+            glColor4f(1.0f, 1.0f, 1.0f, 1.0f); //white color
             glBegin(GL_POLYGON);
             glVertex3f(i*50.0f,       70.0f, 0.0f);
             glVertex3f(i*50.0f+50.0f, 70.0f, 0.0f);
@@ -269,6 +329,22 @@ void display(void)
         }
     }
     //road top border part end
+
+            //road stripe starts
+            for(int i = 0; i<15; i++){
+                if(i%2 == 0){
+                    glColor4f(1.0f, 1.0f, 1.0f, 1.0f); //white color
+                    glBegin(GL_POLYGON);
+                    glVertex3f(i*35.0f,       38.0f, 0.0f);
+                    glVertex3f(i*35.0f+50.0f, 38.0f, 0.0f);
+                    glVertex3f(i*35.0f+50.0f+2.0f, 42.0f, 0.0f);
+                    glVertex3f(i*35.0f+3.0f,       42.0f, 0.0f);
+                    glEnd();
+        }
+    }
+            //road stripe ends
+
+
     /*car part starts*/
 
      //car 0
@@ -285,11 +361,11 @@ void display(void)
             glVertex3f(car0x,   55.0f, 0.0f);
             glEnd();
             if(day_mood == 1){
-                glColor4f(1.0f, 1.0f, 1.0f, 0.0f);//white headlight
+                glColor4f(1.0f, 1.0f, 1.0f, 1.0f);//white headlight
             } else if(day_mood==2){
-                glColor4f(1.0f, 1.0f, 0.0f, 0.0f);//yellow headlight
+                glColor4f(1.0f, 1.0f, 0.0f, 1.0f);//yellow headlight
             } else {
-                glColor4f(1.0f, 0.0f, 0.0f, 0.0f);//red
+                glColor4f(1.0f, 0.0f, 0.0f, 1.0f);//red
             }
             glBegin(GL_POLYGON);
             glVertex3f(car0x,        45.0f, 0.0f);
@@ -316,11 +392,11 @@ void display(void)
             glVertex3f(car1x+57.0f,   18.0f, 0.0f);
             glEnd();
             if(day_mood == 1){
-                glColor4f(1.0f, 1.0f, 1.0f, 0.0f);//white headlight
+                glColor4f(1.0f, 1.0f, 1.0f, 1.0f);//white headlight
             } else if(day_mood==2){
-                glColor4f(1.0f, 1.0f, 0.0f, 0.0f);//yellow headlight
+                glColor4f(1.0f, 1.0f, 0.0f, 1.0f);//yellow headlight
             } else {
-                glColor4f(1.0f, 0.0f, 0.0f, 0.0f);//red
+                glColor4f(1.0f, 0.0f, 0.0f, 1.0f);//red
             }
             glBegin(GL_POLYGON);
             glVertex3f(car1x+57.0f,   25.0f, 0.0f);
@@ -347,11 +423,11 @@ void display(void)
             glVertex3f(car2x+57.0f,   18.0f, 0.0f);
             glEnd();
             if(day_mood == 1){
-                glColor4f(1.0f, 1.0f, 1.0f, 0.0f);//white headlight
+                glColor4f(1.0f, 1.0f, 1.0f, 1.0f);//white headlight
             } else if(day_mood==2){
-                glColor4f(1.0f, 1.0f, 0.0f, 0.0f);//yellow headlight
+                glColor4f(1.0f, 1.0f, 0.0f, 1.0f);//yellow headlight
             } else {
-                glColor4f(1.0f, 0.0f, 0.0f, 0.0f);//red
+                glColor4f(1.0f, 0.0f, 0.0f, 1.0f);//red
             }
             glBegin(GL_POLYGON);
             glVertex3f(car2x+57.0f,   25.0f, 0.0f);
@@ -363,7 +439,6 @@ void display(void)
             drawCircle(car2x+13,18,5.0,20);
             drawCircle(car2x+45,18,5.0,20);
     /*car2 part ends*/
-
 
 //road bottom border part start
     for(int i = 0; i<10; i++){
@@ -377,7 +452,7 @@ void display(void)
             glEnd();
         }
         else{
-            glColor4f(1.0f, 1.0f, 1.0f, 0.0f); //white color
+            glColor4f(1.0f, 1.0f, 1.0f, 1.0f); //white color
             glBegin(GL_POLYGON);
             glVertex3f(i*50.0f,       0.0f, 0.0f);
             glVertex3f(i*50.0f+50.0f, 0.0f, 0.0f);
@@ -406,6 +481,9 @@ void changeDay(int value)
 void init(void)
 {
 	glOrtho(0.0, 500.0, 0.0, 300.0, -1.0, 1.0);
+	glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); //to use glColor4f with alpha value
+
 }
 
 void my_keyboard(unsigned char key, int x, int y)
@@ -428,12 +506,18 @@ void my_keyboard(unsigned char key, int x, int y)
         case 'a':
 		case 'A':
             day_mood=2;
-			changeDay(0);
+			if(isAfternoon == false){
+                isAfternoon = true;
+			}
+			makeAfternoon(0);
 			break;
         case 'n':
 		case 'N':
             day_mood=3;
-			changeDay(0);
+			if(isNight == false){
+                isNight = true;
+			}
+			makeNight(0);
 			break;
 
         case 's':
@@ -469,7 +553,7 @@ void my_keyboard(unsigned char key, int x, int y)
 int main(int argc, char** argv)         //omit the arguments for windows
 {
     glutInit(&argc, argv);              //omit this line for windows too
-	glutInitDisplayMode (GLUT_SINGLE | GLUT_RGB);
+	glutInitDisplayMode (GLUT_SINGLE | GLUT_RGBA);
 	glutInitWindowSize (1280, 720);
 	glutInitWindowPosition (150, 50);
 	glutCreateWindow ("Horizon.");
@@ -486,7 +570,7 @@ void display_apartments(){
     glColor3f(0.0f, 0.5f, 0.5f);//Blue-Green
     glColor3f(0.1f, 0.0f, 0.1f);//Dark Purple
     glColor3f(0.5f, 0.5f, 0.5f);//Violet
-    glColor4f(1.0f, 0.0f, 1.0f, 0.0f);//purple
+    glColor4f(1.0f, 0.0f, 1.0f, 1.0f);//purple
     glColor3f(2.0f, 0.5f, 1.0f);//Lilac
 
     for(int i = 2; i<12; i++){
@@ -506,7 +590,7 @@ void display_apartments(){
             } else if(day_mood==2) {
                 glColor3f(0.1f, 0.1f, 0.1f);//Dark grey
             } else {
-                glColor4f(1.0f, 1.0f, 0.0f, 0.0f);//yellow
+                glColor4f(1.0f, 1.0f, 0.0f, 1.0f);//yellow
             }
             glBegin(GL_POLYGON);
             glVertex3f(i*35.0f+4,  j*20+5, 0.0f);
@@ -523,7 +607,7 @@ void display_apartments(){
             } else if(day_mood==2) {
                 glColor3f(0.1f, 0.1f, 0.1f);//Dark grey
             } else {
-                glColor4f(1.0f, 1.0f, 0.0f, 0.0f);//yellow
+                glColor4f(1.0f, 1.0f, 0.0f, 1.0f);//yellow
             }
             glBegin(GL_POLYGON);
             glVertex3f(i*35.0f+16,  j*20+5, 0.0f);
@@ -550,7 +634,7 @@ void display_apartments(){
             } else if(day_mood==2) {
                 glColor3f(0.1f, 0.1f, 0.1f);//Dark grey
             } else {
-                glColor4f(1.0f, 1.0f, 0.0f, 0.0f);//yellow
+                glColor4f(1.0f, 1.0f, 0.0f, 1.0f);//yellow
             }
             glBegin(GL_POLYGON);
             glVertex3f(i*35.0f+4,  j*20+5, 0.0f);
@@ -567,7 +651,7 @@ void display_apartments(){
             } else if(day_mood==2) {
                 glColor3f(0.1f, 0.1f, 0.1f);//Dark grey
             } else {
-                glColor4f(1.0f, 1.0f, 0.0f, 0.0f);//yellow
+                glColor4f(1.0f, 1.0f, 0.0f, 1.0f);//yellow
             }
             glBegin(GL_POLYGON);
             glVertex3f(i*35.0f+16,  j*20+5, 0.0f);
@@ -592,11 +676,11 @@ void display_roadlights(){
         glVertex2f(x_axis+20,120);
         glEnd();
         if(day_mood == 1){
-            glColor4f(1.0f, 0.0f, 0.0f, 0.0f);//red
+            glColor4f(1.0f, 0.0f, 0.0f, 1.0f);//red
         } else if(day_mood==2){
-            glColor4f(1.0f, 1.0f, 1.0f, 0.0f);//white headlight
+            glColor4f(1.0f, 1.0f, 1.0f, 1.0f);//white headlight
         } else {
-            glColor4f(1.0f, 1.0f, 0.0f, 0.0f);//yellow headlight
+            glColor4f(1.0f, 1.0f, 0.0f, 1.0f);//yellow headlight
         }
         glBegin(GL_POLYGON);
         glVertex3f(x_axis-20,120.0f, 0.0f);
@@ -605,25 +689,59 @@ void display_roadlights(){
         glVertex3f(x_axis-10, 120.0f, 0.0f);
         glEnd();
 
+        //light rays
+        if(day_mood == 3){
+            glColor4f(1.0f, 1.0f, 0.0f, 0.4f);//yellow
+            glBegin(GL_TRIANGLES);
+            glVertex2f(x_axis-15,120);
+            glVertex2f(x_axis - 30,75);
+            glVertex2f(x_axis,75);
+            glEnd();
+        }
+
+        if(day_mood == 1){
+            glColor4f(1.0f, 0.0f, 0.0f, 1.0f);//red
+        } else if(day_mood==2){
+            glColor4f(1.0f, 1.0f, 1.0f, 1.0f);//white headlight
+        } else {
+            glColor4f(1.0f, 1.0f, 0.0f, 1.0f);//yellow headlight
+        }
         glBegin(GL_POLYGON);
         glVertex3f(x_axis+20,120.0f, 0.0f);
         glVertex3f(x_axis+20,117.0f, 0.0f);
         glVertex3f(x_axis+10,117.0f, 0.0f);
         glVertex3f(x_axis+10, 120.0f, 0.0f);
         glEnd();
+        //light rays
+        if(day_mood == 3){
+            glColor4f(1.0f, 1.0f, 0.0f, 0.5f);//yellow
+            glBegin(GL_TRIANGLES);
+            glVertex2f(x_axis + 15,120);
+            glVertex2f(x_axis,75);
+            glVertex2f(x_axis + 30,75);
+            glEnd();
+        }
 
 
     }
 }
 void display_trees(){
     //tree 1
-    glColor3f(0.0f, 1.0f, 0.0f);//Green
+    if(day_mood == 3){
+        glColor3f(0.1f, 0.5f, 0.1f);//darkModeColor
+    } else {
+        glColor3f(0.0f, 1.0f, 0.0f);//Green
+    }
     glBegin(GL_POLYGON); //tree 1 top
     glVertex3f(70.0f,   155.0f, 0.0f);
     glVertex3f(55.0f, 115.0f, 0.0f);
     glVertex3f(85.0f, 115.0f, 0.0f);
     glEnd();
-    glColor3f(0.0f, 1.0f, 0.0f);//Green
+    if(day_mood == 3){
+        glColor3f(0.1f, 0.5f, 0.1f);//darkModeColor
+    } else {
+        glColor3f(0.0f, 1.0f, 0.0f);//Green
+    }
     glBegin(GL_POLYGON); //tree 1 middle
     glVertex3f(70.0f,   130.0f, 0.0f);
     glVertex3f(55.0f, 90.0f, 0.0f);
@@ -637,13 +755,21 @@ void display_trees(){
     glEnd();
 
     //tree 2
-    glColor3f(0.0f, 1.0f, 0.0f);//Green
+    if(day_mood == 3){
+        glColor3f(0.1f, 0.5f, 0.1f);//darkModeColor
+    } else {
+        glColor3f(0.0f, 1.0f, 0.0f);//Green
+    }
     glBegin(GL_POLYGON); //tree 2 top
     glVertex3f(120.0f,   155.0f, 0.0f);
     glVertex3f(105.0f, 115.0f, 0.0f);
     glVertex3f(135.0f, 115.0f, 0.0f);
     glEnd();
-    glColor3f(0.0f, 1.0f, 0.0f);//Green
+    if(day_mood == 3){
+        glColor3f(0.1f, 0.5f, 0.1f);//darkModeColor
+    } else {
+        glColor3f(0.0f, 1.0f, 0.0f);//Green
+    }
     glBegin(GL_POLYGON); //tree 2 middle
     glVertex3f(120.0f,   130.0f, 0.0f);
     glVertex3f(105.0f, 90.0f, 0.0f);
@@ -657,13 +783,21 @@ void display_trees(){
     glEnd();
 
     //tree 3
-    glColor3f(0.0f, 1.0f, 0.0f);//Green
+    if(day_mood == 3){
+        glColor3f(0.1f, 0.5f, 0.1f);//darkModeColor
+    } else {
+        glColor3f(0.0f, 1.0f, 0.0f);//Green
+    }
     glBegin(GL_POLYGON); //tree 3 top
     glVertex3f(170.0f,   155.0f, 0.0f);
     glVertex3f(155.0f, 115.0f, 0.0f);
     glVertex3f(185.0f, 115.0f, 0.0f);
     glEnd();
-    glColor3f(0.0f, 1.0f, 0.0f);//Green
+    if(day_mood == 3){
+        glColor3f(0.1f, 0.5f, 0.1f);//darkModeColor
+    } else {
+        glColor3f(0.0f, 1.0f, 0.0f);//Green
+    }
     glBegin(GL_POLYGON); //tree 3 middle
     glVertex3f(170.0f,   130.0f, 0.0f);
     glVertex3f(155.0f, 90.0f, 0.0f);
@@ -677,13 +811,21 @@ void display_trees(){
     glEnd();
 
     //tree 4
-    glColor3f(0.0f, 1.0f, 0.0f);//Green
+    if(day_mood == 3){
+        glColor3f(0.1f, 0.5f, 0.1f);//darkModeColor
+    } else {
+        glColor3f(0.0f, 1.0f, 0.0f);//Green
+    }
     glBegin(GL_POLYGON); //tree 4 top
     glVertex3f(220.0f,   155.0f, 0.0f);
     glVertex3f(205.0f, 115.0f, 0.0f);
     glVertex3f(235.0f, 115.0f, 0.0f);
     glEnd();
-    glColor3f(0.0f, 1.0f, 0.0f);//Green
+    if(day_mood == 3){
+        glColor3f(0.1f, 0.5f, 0.1f);//darkModeColor
+    } else {
+        glColor3f(0.0f, 1.0f, 0.0f);//Green
+    }
     glBegin(GL_POLYGON); //tree 4 middle
     glVertex3f(220.0f,   130.0f, 0.0f);
     glVertex3f(205.0f, 90.0f, 0.0f);
@@ -697,13 +839,21 @@ void display_trees(){
     glEnd();
 
     //tree 5
-    glColor3f(0.0f, 1.0f, 0.0f);//Green
+    if(day_mood == 3){
+        glColor3f(0.1f, 0.5f, 0.1f);//darkModeColor
+    } else {
+        glColor3f(0.0f, 1.0f, 0.0f);//Green
+    }
     glBegin(GL_POLYGON); //tree 5 top
     glVertex3f(270.0f,   155.0f, 0.0f);
     glVertex3f(255.0f, 115.0f, 0.0f);
     glVertex3f(285.0f, 115.0f, 0.0f);
     glEnd();
-    glColor3f(0.0f, 1.0f, 0.0f);//Green
+    if(day_mood == 3){
+        glColor3f(0.1f, 0.5f, 0.1f);//darkModeColor
+    } else {
+        glColor3f(0.0f, 1.0f, 0.0f);//Green
+    }
     glBegin(GL_POLYGON); //tree 5 middle
     glVertex3f(270.0f,   130.0f, 0.0f);
     glVertex3f(255.0f, 90.0f, 0.0f);
@@ -717,13 +867,21 @@ void display_trees(){
     glEnd();
 
     //tree 6
-    glColor3f(0.0f, 1.0f, 0.0f);//Green
+   if(day_mood == 3){
+        glColor3f(0.1f, 0.5f, 0.1f);//darkModeColor
+    } else {
+        glColor3f(0.0f, 1.0f, 0.0f);//Green
+    }
     glBegin(GL_POLYGON); //tree 6 top
     glVertex3f(320.0f,   155.0f, 0.0f);
     glVertex3f(305.0f, 115.0f, 0.0f);
     glVertex3f(335.0f, 115.0f, 0.0f);
     glEnd();
-    glColor3f(0.0f, 1.0f, 0.0f);//Green
+    if(day_mood == 3){
+        glColor3f(0.1f, 0.5f, 0.1f);//darkModeColor
+    } else {
+        glColor3f(0.0f, 1.0f, 0.0f);//Green
+    }
     glBegin(GL_POLYGON); //tree 6 middle
     glVertex3f(320.0f,   130.0f, 0.0f);
     glVertex3f(305.0f, 90.0f, 0.0f);
@@ -737,13 +895,21 @@ void display_trees(){
     glEnd();
 
     //tree 7
-    glColor3f(0.0f, 1.0f, 0.0f);//Green
+    if(day_mood == 3){
+        glColor3f(0.1f, 0.5f, 0.1f);//darkModeColor
+    } else {
+        glColor3f(0.0f, 1.0f, 0.0f);//Green
+    }
     glBegin(GL_POLYGON); //tree 7 top
     glVertex3f(370.0f,   155.0f, 0.0f);
     glVertex3f(355.0f, 115.0f, 0.0f);
     glVertex3f(385.0f, 115.0f, 0.0f);
     glEnd();
-    glColor3f(0.0f, 1.0f, 0.0f);//Green
+    if(day_mood == 3){
+        glColor3f(0.1f, 0.5f, 0.1f);//darkModeColor
+    } else {
+        glColor3f(0.0f, 1.0f, 0.0f);//Green
+    }
     glBegin(GL_POLYGON); //tree 7 middle
     glVertex3f(370.0f,   130.0f, 0.0f);
     glVertex3f(355.0f, 90.0f, 0.0f);
@@ -757,13 +923,21 @@ void display_trees(){
     glEnd();
 
     //tree 7
-    glColor3f(0.0f, 1.0f, 0.0f);//Green
+    if(day_mood == 3){
+        glColor3f(0.1f, 0.5f, 0.1f);//darkModeColor
+    } else {
+        glColor3f(0.0f, 1.0f, 0.0f);//Green
+    }
     glBegin(GL_POLYGON); //tree 7 top
     glVertex3f(420.0f,   155.0f, 0.0f);
     glVertex3f(405.0f, 115.0f, 0.0f);
     glVertex3f(435.0f, 115.0f, 0.0f);
     glEnd();
-    glColor3f(0.0f, 1.0f, 0.0f);//Green
+    if(day_mood == 3){
+        glColor3f(0.1f, 0.5f, 0.1f);//darkModeColor
+    } else {
+        glColor3f(0.0f, 1.0f, 0.0f);//Green
+    }
     glBegin(GL_POLYGON); //tree 7 middle
     glVertex3f(420.0f,   130.0f, 0.0f);
     glVertex3f(405.0f, 90.0f, 0.0f);
