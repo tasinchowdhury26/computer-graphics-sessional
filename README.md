@@ -25,8 +25,8 @@ Last but not least, the my_keyboard method is defined to handle the key presses 
 In the beginning of the project, we learned the basics of OpenGL. Then we started putting piece by piece in it and tried our best to bring out the best out of it.  We are more enthusiastic about learning more of it, so that we can be a part of the modern technological realm, and share our innovative ideas. And we are very grateful to our instructor who has been really nice to us in all circumstances.  We appreciate her effort in guiding us to make this project happen. 
 
 Some images of the project outcome: 
-![Afternoon](https://i.ibb.co/sqj9nVV/Screenshot-from-2022-11-14-01-32-24.png)
-![Day](https://i.ibb.co/qN2KvKv/Screenshot-from-2022-11-14-01-32-11.png)
+![Afternoon](https://i.ibb.co/NtgdjG5/Screenshot-from-2022-11-28-02-07-12.png)
+![Day](https://i.ibb.co/wr2QgDb/Screenshot-from-2022-11-28-02-07-02.png)
 ![Rain](https://i.ibb.co/WsQ3YJv/Screenshot-from-2022-11-14-01-32-54.png)
-![Night Rain](https://i.ibb.co/j8qVWGF/Screenshot-from-2022-11-14-01-33-02.png)
+![Night Rain](https://i.ibb.co/1rqQ0z9/Screenshot-from-2022-11-28-02-07-32.png)
 
